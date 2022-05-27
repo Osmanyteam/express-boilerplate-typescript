@@ -1,9 +1,9 @@
 {
-  "name": "myava-api",
+  "name": "express-api-boilerplate",
   "version": "0.0.0",
-  "description": "api for MyAva",
-  "author": "osmany jiron <osmany@qordev.com>",
-  "license": "ISC",
+  "description": "boirplate for express api",
+  "author": "osmany jiron <jos.ojiron@gmail.com>",
+  "license": "MIT",
   "scripts": {
     "start": "npm run build && cross-env NODE_ENV=production node dist/server.js",
     "dev": "cross-env NODE_ENV=development nodemon",
