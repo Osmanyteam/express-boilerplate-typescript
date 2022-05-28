@@ -1,5 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
-import { User } from '@apiServices/user/interfaces/users.interface';
+import { User } from '@/apiServices/user/interfaces/users.interface';
 import { toJSON } from '../../../models/plugins';
 
 /**

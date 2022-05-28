@@ -1,15 +1,15 @@
-import { CreateUserDto } from '@apiServices/user/dto/users.dto';
-import { DataStoredInToken } from '@apiServices/auth/interfaces/auth.interface';
-import { User } from '@apiServices/user/interfaces/users.interface';
-import AuthService from '@apiServices/auth/auth.service';
+import { CreateUserDto } from '@/apiServices/user/dto/users.dto';
+import { DataStoredInToken } from '@/apiServices/auth/interfaces/auth.interface';
+import { User } from '@/apiServices/user/interfaces/users.interface';
+import AuthService from '@/apiServices/auth/auth.service';
 import { HttpException } from '@/exceptions/HttpException';
 import { verify } from 'jsonwebtoken';
 import { SECRET_KEY } from '@/config';
-import tokenJWTModel from '@/models/tokenJWT.model';
-import UserService from '@apiServices/user/users.service';
+import tokenJWTModel from '@/apiServices/auth/models/tokenJWT.model';
 import { JsonController, Body, Post, Authorized, HttpCode, CurrentUser, Patch } from 'routing-controllers';
 import { ResponseSchema, OpenAPI } from 'routing-controllers-openapi';
 import { RefreshTokenDto, TokenDataResponseDto, UserCreatedResponseDto, UserResponse, UserTokenResponseDto } from './dto/auth.dto';
+import UserService from '@/apiServices/user/users.service';
 
 @JsonController('/auth')
 class AuthController {

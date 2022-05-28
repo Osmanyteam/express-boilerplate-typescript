@@ -1,5 +1,5 @@
 import { model, Schema, Document } from 'mongoose';
-import { TokenJWT } from '@interfaces/tokenJWT.interface';
+import { TokenJWT } from '@/apiServices/auth/interfaces/tokenJWT.interface';
 
 const tokenSchema = new Schema(
   {

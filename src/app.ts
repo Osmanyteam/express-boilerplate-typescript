@@ -10,8 +10,8 @@ import { useExpressServer, getMetadataArgsStorage, RoutingControllersOptions } f
 import { routingControllersToSpec } from 'routing-controllers-openapi';
 import * as swaggerUiExpress from 'swagger-ui-express';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
-import { authorizationChecker, currentUserChecker } from './utils/auth';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
+import AuthService from '@/apiServices/auth/auth.service';
 
 class App {
   public app: express.Application;
@@ -22,12 +22,12 @@ class App {
 
   constructor(controllers: Function[]) {
     this.app = express();
-    this.initializeMiddlewares();
+    this.initializeMiddleware();
     this.initializeIndexRoute();
     // now appends routers
     this.routingControllersOptions = {
-      authorizationChecker,
-      currentUserChecker,
+      authorizationChecker: AuthService.authorizationChecker,
+      currentUserChecker: AuthService.currentUserChecker,
       controllers: controllers,
       defaultErrorHandler: true,
       routePrefix: this.prefixRoute,
@@ -54,7 +54,7 @@ class App {
     return this.app;
   }
 
-  private initializeMiddlewares() {
+  private initializeMiddleware() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
     this.app.use(hpp());
     this.app.use(helmet());

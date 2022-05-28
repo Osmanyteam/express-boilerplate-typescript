@@ -22,17 +22,11 @@
     "baseUrl": "src",
     "paths": {
       "@/*": ["*"],
-      "@apiServices" : ["apiServices/*"],
       "@config": ["config"],
-      "@controllers/*": ["controllers/*"],
-      "@databases": ["databases"],
-      "@dtos/*": ["dtos/*"],
+      "@databases": ["databases/*"],
       "@exceptions/*": ["exceptions/*"],
       "@interfaces/*": ["interfaces/*"],
       "@middlewares/*": ["middlewares/*"],
-      "@models/*": ["models/*"],
-      "@routes/*": ["routes/*"],
-      "@services/*": ["services/*"],
       "@utils/*": ["utils/*"]
     }
   },
