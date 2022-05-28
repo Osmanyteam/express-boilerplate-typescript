@@ -1,11 +1,11 @@
 import { hash, compare } from 'bcrypt';
 import { sign } from 'jsonwebtoken';
 import { SECRET_KEY, ACCESS_TOKEN_EXPIRE_TIME, REFRESH_TOKEN_EXPIRE_TIME } from '@config';
-import { CreateUserDto } from '@/apiServices/user/users.dto';
+import { CreateUserDto } from '@apiServices/user/dto/users.dto';
 import { HttpException } from '@exceptions/HttpException';
-import { DataStoredInToken, TokenData } from '@/apiServices/auth/auth.interface';
-import { User } from '@/apiServices/user/users.interface';
-import userModel from '@/apiServices/user/users.model';
+import { DataStoredInToken, TokenData } from '@apiServices/auth/interfaces/auth.interface';
+import { User } from '@apiServices/user/interfaces/users.interface';
+import userModel from '@apiServices/user/models/users.model';
 import { isEmpty } from '@utils/util';
 import tokenJWTModel from '@/models/tokenJWT.model';
 

@@ -4,9 +4,7 @@ import express from 'express';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
-import { connect, set } from 'mongoose';
 import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
-import { dbConnection } from '@databases';
 import { logger, stream } from '@utils/logger';
 import { useExpressServer, getMetadataArgsStorage, RoutingControllersOptions } from 'routing-controllers';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
@@ -20,7 +18,6 @@ class App {
   public env: string;
   public port: string | number;
   public prefixRoute = '/api';
-  private serverReady = false;
   private routingControllersOptions: RoutingControllersOptions;
 
   constructor(controllers: Function[]) {
@@ -42,38 +39,19 @@ class App {
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
     this.initializeSwagger();
-    this.connectToDatabase();
   }
 
   public listen() {
-    this.app.listen(this.port);
+    this.app.listen(this.port, () => {
+      logger.info(`=================================`);
+      logger.info(`======= ENV: ${this.env} =======`);
+      logger.info(`🚀 App listening on the port ${this.port}`);
+      logger.info(`=================================`);
+    });
   }
 
-  public async getServer() {
-    do {
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } while (!this.serverReady);
+  public getServer() {
     return this.app;
-  }
-
-  private async connectToDatabase() {
-    if (this.env !== 'production') {
-      set('debug', true);
-    }
-
-    try {
-      connect(dbConnection.url, dbConnection.options, () => {
-        logger.info(`=================================`);
-        logger.info(`======= ENV: ${this.env} =======`);
-        logger.info(`======= MongoDB connected ======`);
-        logger.info(`🚀 App listening on the port ${this.port}`);
-        logger.info(`=================================`);
-        this.serverReady = true;
-      });
-    } catch (error) {
-      logger.error(error);
-      process.exit(1);
-    }
   }
 
   private initializeMiddlewares() {

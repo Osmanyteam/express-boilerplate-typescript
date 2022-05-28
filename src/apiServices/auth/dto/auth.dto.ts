@@ -1,5 +1,5 @@
 import { IsString, IsObject, ValidateNested, IsNumber } from 'class-validator';
-import { CreateUserDto } from '../user/users.dto';
+import { CreateUserDto } from '../../user/dto/users.dto';
 
 export class MessageResponseDto {
   @IsString()

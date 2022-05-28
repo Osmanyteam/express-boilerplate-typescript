@@ -1,17 +1,17 @@
 import { verify } from 'jsonwebtoken';
 import { SECRET_KEY } from '@config';
 import { HttpException } from '@exceptions/HttpException';
-import { DataStoredInToken } from '@/apiServices/auth/auth.interface';
-import userModel from '@/apiServices/user/users.model';
+import { DataStoredInToken } from '@apiServices/auth/interfaces/auth.interface';
+import userModel from '@apiServices/user/models/users.model';
 import tokenJWTModel from '@/models/tokenJWT.model';
-import { getAuthorizationtoken } from '@/utils/getAuthorizationtoken';
+import { getAuthorizationToken } from '@/utils/getAuthorizationToken';
 import { Action } from 'routing-controllers';
 import { logger } from '@/utils/logger';
 const secretKey: string = SECRET_KEY;
 
 export const authorizationChecker = async (action: Action, roles: string[]) => {
   try {
-    const Authorization = getAuthorizationtoken(action.request);
+    const Authorization = getAuthorizationToken(action.request);
 
     if (typeof Authorization === 'string') {
       const verificationResponse = verify(Authorization, secretKey) as DataStoredInToken;
@@ -33,7 +33,7 @@ export const authorizationChecker = async (action: Action, roles: string[]) => {
 };
 
 export const currentUserChecker = async (action: Action) => {
-  const Authorization = getAuthorizationtoken(action.request);
+  const Authorization = getAuthorizationToken(action.request);
   if (typeof Authorization !== 'string') return {};
   const secretKey: string = SECRET_KEY;
   const verificationResponse = verify(Authorization, secretKey) as DataStoredInToken;

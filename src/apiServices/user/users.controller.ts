@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
-import { User } from '@/apiServices/user/users.interface';
-import userService from '@/apiServices/user/users.service';
+import { User } from '@apiServices/user/interfaces/users.interface';
+import userService from '@apiServices/user/users.service';
 
 class UsersController {
   public userService = new userService();
