@@ -1,13 +1,18 @@
 import { hash, compare } from 'bcrypt';
-import { sign } from 'jsonwebtoken';
+import { sign, verify } from 'jsonwebtoken';
 import { SECRET_KEY, ACCESS_TOKEN_EXPIRE_TIME, REFRESH_TOKEN_EXPIRE_TIME } from '@config';
-import { CreateUserDto } from '@/apiServices/user/users.dto';
+import { CreateUserDto } from '@/apiServices/user/dto/users.dto';
 import { HttpException } from '@exceptions/HttpException';
-import { DataStoredInToken, TokenData } from '@/apiServices/auth/auth.interface';
-import { User } from '@/apiServices/user/users.interface';
-import userModel from '@/apiServices/user/users.model';
+import { DataStoredInToken, TokenData } from '@/apiServices/auth/interfaces/auth.interface';
+import { User } from '@/apiServices/user/interfaces/users.interface';
+import userModel from '@/apiServices/user/models/users.model';
 import { isEmpty } from '@utils/util';
-import tokenJWTModel from '@/models/tokenJWT.model';
+import tokenJWTModel from '@/apiServices/auth/models/tokenJWT.model';
+import { RequestWithUser } from './interfaces/auth.interface';
+import { Action } from 'routing-controllers';
+import { logger } from '@/utils/logger';
+
+const secretKey: string = SECRET_KEY;
 
 class AuthService {
   public users = userModel;
@@ -65,6 +70,42 @@ class AuthService {
     };
     await tokenJWTModel.create({ user: user._id, accessToken: tokenData.accessToken.token, refreshToken: tokenData.refreshToken.token });
     return tokenData;
+  }
+
+  public static getAuthorizationToken(req: RequestWithUser): String | null {
+    return req.cookies['Authorization'] || (req.header('Authorization') ? req.header('Authorization').split('Bearer ')[1] : null);
+  }
+
+  public static async authorizationChecker(action: Action, roles: string[]) {
+    try {
+      const Authorization = AuthService.getAuthorizationToken(action.request);
+
+      if (typeof Authorization === 'string') {
+        const verificationResponse = verify(Authorization, secretKey) as DataStoredInToken;
+        const userId = verificationResponse._id;
+        const tokenExists = await tokenJWTModel.findOne({ accessToken: Authorization, user: userId });
+        if (!tokenExists) {
+          throw new HttpException(401, 'Token not found');
+        }
+        const user = await userModel.findById(userId);
+
+        if (user && !roles.length) return true;
+        if (user && roles.find(role => user.roles.indexOf(role) !== -1)) return true;
+      }
+      return false;
+    } catch (error) {
+      logger.error(error);
+      return false;
+    }
+  }
+
+  public static async currentUserChecker(action: Action) {
+    const Authorization = this.getAuthorizationToken(action.request);
+    if (typeof Authorization !== 'string') return {};
+    const secretKey: string = SECRET_KEY;
+    const verificationResponse = verify(Authorization, secretKey) as DataStoredInToken;
+    const userId = verificationResponse._id;
+    return userModel.findById(userId);
   }
 }
 

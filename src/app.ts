@@ -4,33 +4,30 @@ import express from 'express';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
-import { connect, set } from 'mongoose';
 import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
-import { dbConnection } from '@databases';
 import { logger, stream } from '@utils/logger';
 import { useExpressServer, getMetadataArgsStorage, RoutingControllersOptions } from 'routing-controllers';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
 import * as swaggerUiExpress from 'swagger-ui-express';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
-import { authorizationChecker, currentUserChecker } from './utils/auth';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
+import AuthService from '@/apiServices/auth/auth.service';
 
 class App {
   public app: express.Application;
   public env: string;
   public port: string | number;
   public prefixRoute = '/api';
-  private serverReady = false;
   private routingControllersOptions: RoutingControllersOptions;
 
   constructor(controllers: Function[]) {
     this.app = express();
-    this.initializeMiddlewares();
+    this.initializeMiddleware();
     this.initializeIndexRoute();
     // now appends routers
     this.routingControllersOptions = {
-      authorizationChecker,
-      currentUserChecker,
+      authorizationChecker: AuthService.authorizationChecker,
+      currentUserChecker: AuthService.currentUserChecker,
       controllers: controllers,
       defaultErrorHandler: true,
       routePrefix: this.prefixRoute,
@@ -42,41 +39,22 @@ class App {
     this.env = NODE_ENV || 'development';
     this.port = PORT || 3000;
     this.initializeSwagger();
-    this.connectToDatabase();
   }
 
   public listen() {
-    this.app.listen(this.port);
+    this.app.listen(this.port, () => {
+      logger.info(`=================================`);
+      logger.info(`======= ENV: ${this.env} =======`);
+      logger.info(`🚀 App listening on the port ${this.port}`);
+      logger.info(`=================================`);
+    });
   }
 
-  public async getServer() {
-    do {
-      await new Promise(resolve => setTimeout(resolve, 500));
-    } while (!this.serverReady);
+  public getServer() {
     return this.app;
   }
 
-  private async connectToDatabase() {
-    if (this.env !== 'production') {
-      set('debug', true);
-    }
-
-    try {
-      connect(dbConnection.url, dbConnection.options, () => {
-        logger.info(`=================================`);
-        logger.info(`======= ENV: ${this.env} =======`);
-        logger.info(`======= MongoDB connected ======`);
-        logger.info(`🚀 App listening on the port ${this.port}`);
-        logger.info(`=================================`);
-        this.serverReady = true;
-      });
-    } catch (error) {
-      logger.error(error);
-      process.exit(1);
-    }
-  }
-
-  private initializeMiddlewares() {
+  private initializeMiddleware() {
     this.app.use(morgan(LOG_FORMAT, { stream }));
     this.app.use(hpp());
     this.app.use(helmet());

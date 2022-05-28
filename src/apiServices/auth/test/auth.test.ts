@@ -1,10 +1,10 @@
 import request from 'supertest';
 import { Application } from 'express';
-import App from '../../app';
-import { clearDatabase } from '../../tests/utilsTest';
-import { CreateUserDto } from '../user/users.dto';
-import { TokenData } from './auth.interface';
-import AuthController from './auth.controller';
+import App from '../../../app';
+import { clearDatabase } from '../../../tests/utilsTest';
+import { CreateUserDto } from '../../user/dto/users.dto';
+import { TokenData } from '../interfaces/auth.interface';
+import AuthController from '../auth.controller';
 
 const app = new App([AuthController]);
 let server: Application, tokenData: TokenData;

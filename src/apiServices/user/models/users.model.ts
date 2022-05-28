@@ -1,6 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
-import { User } from '@/apiServices/user/users.interface';
-import { toJSON } from '../../models/plugins';
+import { User } from '@/apiServices/user/interfaces/users.interface';
+import { toJSON } from '../../../models/plugins';
 
 /**
  * A Mongoose schema for the User model.
