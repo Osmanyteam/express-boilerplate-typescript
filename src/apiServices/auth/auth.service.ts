@@ -11,9 +11,11 @@ import tokenJWTModel from '@/apiServices/auth/models/tokenJWT.model';
 import { RequestWithUser } from './interfaces/auth.interface';
 import { Action } from 'routing-controllers';
 import { logger } from '@/utils/logger';
+import { Service } from 'typedi';
 
 const secretKey: string = SECRET_KEY;
 
+@Service()
 class AuthService {
   public users = userModel;
 

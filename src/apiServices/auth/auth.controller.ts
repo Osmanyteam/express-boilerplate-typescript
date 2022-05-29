@@ -10,10 +10,12 @@ import { JsonController, Body, Post, Authorized, HttpCode, CurrentUser, Patch } 
 import { ResponseSchema, OpenAPI } from 'routing-controllers-openapi';
 import { RefreshTokenDto, TokenDataResponseDto, UserCreatedResponseDto, UserResponse, UserTokenResponseDto } from './dto/auth.dto';
 import UserService from '@/apiServices/user/users.service';
+import { Service } from 'typedi';
 
+@Service()
 @JsonController('/auth')
 class AuthController {
-  private authService = new AuthService();
+  constructor(private authService: AuthService) {}
 
   @HttpCode(201)
   @Post('/signup')

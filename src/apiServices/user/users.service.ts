@@ -2,7 +2,9 @@ import { HttpException } from '@exceptions/HttpException';
 import { User } from '@/apiServices/user/interfaces/users.interface';
 import userModel from '@/apiServices/user/models/users.model';
 import { isEmpty } from '@utils/util';
+import { Service } from 'typedi';
 
+@Service()
 class UserService {
   public users = userModel;
 
