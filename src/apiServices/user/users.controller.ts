@@ -1,9 +1,11 @@
 import { NextFunction, Request, Response } from 'express';
 import { User } from '@/apiServices/user/interfaces/users.interface';
-import userService from '@/apiServices/user/users.service';
+import { Service } from 'typedi';
+import UserService from '@/apiServices/user/users.service';
 
+@Service()
 class UsersController {
-  public userService = new userService();
+  constructor(public userService: UserService) {}
 
   public getUserById = async (req: Request, res: Response, next: NextFunction) => {
     try {

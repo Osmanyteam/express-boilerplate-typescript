@@ -6,12 +6,13 @@ import hpp from 'hpp';
 import morgan from 'morgan';
 import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
 import { logger, stream } from '@utils/logger';
-import { useExpressServer, getMetadataArgsStorage, RoutingControllersOptions } from 'routing-controllers';
+import { useExpressServer, getMetadataArgsStorage, RoutingControllersOptions, useContainer } from 'routing-controllers';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
 import * as swaggerUiExpress from 'swagger-ui-express';
 import { validationMetadatasToSchemas } from 'class-validator-jsonschema';
 import { defaultMetadataStorage } from 'class-transformer/cjs/storage';
 import AuthService from '@/apiServices/auth/auth.service';
+import Container from 'typedi';
 
 class App {
   public app: express.Application;
@@ -20,10 +21,12 @@ class App {
   public prefixRoute = '/api';
   private routingControllersOptions: RoutingControllersOptions;
 
-  constructor(controllers: Function[]) {
+  constructor(controllers: any[]) {
     this.app = express();
     this.initializeMiddleware();
     this.initializeIndexRoute();
+    // enable inject parameters
+    useContainer(Container);
     // now appends routers
     this.routingControllersOptions = {
       authorizationChecker: AuthService.authorizationChecker,
@@ -88,8 +91,8 @@ class App {
         },
       },
       info: {
-        description: 'API Documentation for MyAva',
-        title: 'API MyAva',
+        description: 'API Documentation',
+        title: 'API',
         version: '1.0.0',
       },
     });
