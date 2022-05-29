@@ -4,7 +4,7 @@ import express from 'express';
 import helmet from 'helmet';
 import hpp from 'hpp';
 import morgan from 'morgan';
-import { NODE_ENV, PORT, LOG_FORMAT, ORIGIN, CREDENTIALS } from '@config';
+import { NODE_ENV, PORT, ORIGIN, CREDENTIALS } from '@config';
 import { logger, stream } from '@utils/logger';
 import { useExpressServer, getMetadataArgsStorage, RoutingControllersOptions, useContainer } from 'routing-controllers';
 import { routingControllersToSpec } from 'routing-controllers-openapi';
@@ -58,7 +58,7 @@ class App {
   }
 
   private initializeMiddleware() {
-    this.app.use(morgan(LOG_FORMAT, { stream }));
+    this.app.use(morgan(':date :method ":url"', { stream }));
     this.app.use(hpp());
     this.app.use(helmet());
     this.app.use(compression());
