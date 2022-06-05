@@ -1,7 +1,7 @@
 {
   "name": "express-api-boilerplate",
   "version": "0.0.0",
-  "description": "boirplate for express api",
+  "description": "boilerplate for express api",
   "author": "osmany jiron <jos.ojiron@gmail.com>",
   "license": "MIT",
   "scripts": {
@@ -17,7 +17,7 @@
     "deploy:dev": "pm2 start ecosystem.config.js --only dev"
   },
   "engines": {
-    "node": "~16.15.0"
+    "node": ">=16.15.0"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
