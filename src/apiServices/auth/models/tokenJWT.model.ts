@@ -1,7 +1,7 @@
-import { model, Schema, Document } from 'mongoose';
-import { TokenJWT } from '@/apiServices/auth/interfaces/tokenJWT.interface';
+import { model, Schema } from 'mongoose';
+import { ITokenJWT } from '@/apiServices/auth/interfaces/tokenJWT.interface';
 
-const tokenSchema = new Schema(
+const tokenSchema = new Schema<ITokenJWT>(
   {
     user: {
       type: Schema.Types.ObjectId,
@@ -22,6 +22,6 @@ const tokenSchema = new Schema(
   },
 );
 
-const tokenJWTModel = model<TokenJWT & Document>('tokenjwt', tokenSchema);
+const tokenJWTModel = model<ITokenJWT>('tokenjwt', tokenSchema);
 
 export default tokenJWTModel;

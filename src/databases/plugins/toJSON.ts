@@ -5,7 +5,7 @@ import { Schema } from 'mongoose';
 
 const utils = require('./utils');
 
-export const toJSON = function (schema: Schema, options: any) {
+export const toJSON = function <T>(schema: Schema<T>, options: any) {
   options = _.merge({ omit: [], pick: [] }, options);
   const privatePaths = utils.getPaths(schema, options);
   utils.updatePaths(privatePaths, options);
@@ -42,4 +42,5 @@ export const toJSON = function (schema: Schema, options: any) {
   schema.statics.omitPrivatePaths = omitPrivatePaths;
   schema.statics.toProjection = toProjection;
   (schema as any)._privatePaths = toProjection({});
+  return schema;
 };
