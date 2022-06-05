@@ -3,7 +3,7 @@ import { sign, verify } from 'jsonwebtoken';
 import { SECRET_KEY, ACCESS_TOKEN_EXPIRE_TIME, REFRESH_TOKEN_EXPIRE_TIME } from '@config';
 import { CreateUserDto } from '@/apiServices/user/dto/users.dto';
 import { HttpException } from '@exceptions/HttpException';
-import { DataStoredInToken, TokenData } from '@/apiServices/auth/interfaces/auth.interface';
+import { DataStoredInToken, ITokenData } from '@/apiServices/auth/interfaces/auth.interface';
 import userModel from '@/apiServices/user/models/users.model';
 import { isEmpty } from '@utils/util';
 import tokenJWTModel from '@/apiServices/auth/models/tokenJWT.model';
@@ -31,7 +31,7 @@ class AuthService {
     return createUserData;
   }
 
-  public async login(userData: CreateUserDto): Promise<{ tokenData: TokenData; findUser: IUser }> {
+  public async login(userData: CreateUserDto): Promise<{ tokenData: ITokenData; findUser: IUser }> {
     if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
 
     const findUser: IUser = await this.users.findOne({ email: userData.email });
@@ -54,7 +54,7 @@ class AuthService {
     return findUser;
   }
 
-  public async createToken(user: IUser): Promise<TokenData> {
+  public async createToken(user: IUser): Promise<ITokenData> {
     const dataStoredInToken: DataStoredInToken = { _id: user._id };
     const secretKey: string = SECRET_KEY;
     const expiresIn = Number(ACCESS_TOKEN_EXPIRE_TIME);

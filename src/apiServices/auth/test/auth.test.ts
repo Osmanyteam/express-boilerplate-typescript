@@ -3,14 +3,15 @@ import { Application } from 'express';
 import App from '../../../app';
 import { clearDatabase } from '../../../tests/utilsTest';
 import { CreateUserDto } from '../../user/dto/users.dto';
-import { TokenData } from '../interfaces/auth.interface';
+import { ITokenData } from '../interfaces/auth.interface';
 import AuthController from '../auth.controller';
 
 const app = new App([AuthController]);
-let server: Application, tokenData: TokenData;
+let server: Application, tokenData: ITokenData;
 const userData: CreateUserDto = {
   email: 'test@email.com',
   password: 'q1w2e3r4!',
+  username: 'name',
 };
 
 beforeAll(async () => {
