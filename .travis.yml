@@ -1,0 +1,21 @@
+language: node_js
+node_js:
+  - '16.15.0'
+services:
+  - mongodb
+cache: yarn
+branches:
+  only:
+    - main
+env:
+  global:
+    - PORT=3000
+    - DB_URL=mongodb://localhost:27017/node-boilerplate
+    - ORIGIN=*
+    - JWT_SECRET=thisisasamplesecret
+    - JWT_ACCESS_EXPIRATION_SECONDS=30
+    - JWT_REFRESH_EXPIRATION_DAYS=30
+script:
+  - yarn lint
+  - yarn test
+after_success: yarn coverage:coveralls
