@@ -1,6 +1,6 @@
 import { hash, compare } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
-import { SECRET_KEY, ACCESS_TOKEN_EXPIRE_TIME, REFRESH_TOKEN_EXPIRE_TIME } from '@config';
+import { JWT_SECRET, JWT_ACCESS_EXPIRATION_SECONDS, JWT_REFRESH_EXPIRATION_DAYS } from '@config';
 import { CreateUserDto } from '@/apiServices/user/dto/users.dto';
 import { HttpException } from '@exceptions/HttpException';
 import { DataStoredInToken, ITokenData } from '@/apiServices/auth/interfaces/auth.interface';
@@ -13,7 +13,7 @@ import { logger } from '@/utils/logger';
 import { Service } from 'typedi';
 import { IUser } from '../user/interfaces/users.interface';
 
-const secretKey: string = SECRET_KEY;
+const secretKey: string = JWT_SECRET;
 
 @Service()
 class AuthService {
@@ -56,9 +56,9 @@ class AuthService {
 
   public async createToken(user: IUser): Promise<ITokenData> {
     const dataStoredInToken: DataStoredInToken = { _id: user._id };
-    const secretKey: string = SECRET_KEY;
-    const expiresIn = Number(ACCESS_TOKEN_EXPIRE_TIME);
-    const expiresRefreshToken = Number(REFRESH_TOKEN_EXPIRE_TIME);
+    const secretKey: string = JWT_SECRET;
+    const expiresIn = Number(JWT_ACCESS_EXPIRATION_SECONDS);
+    const expiresRefreshToken = Number(JWT_REFRESH_EXPIRATION_DAYS);
 
     const tokenData = {
       accessToken: {
@@ -104,7 +104,7 @@ class AuthService {
   public static async currentUserChecker(action: Action) {
     const Authorization = this.getAuthorizationToken(action.request);
     if (typeof Authorization !== 'string') return {};
-    const secretKey: string = SECRET_KEY;
+    const secretKey: string = JWT_SECRET;
     const verificationResponse = verify(Authorization, secretKey) as DataStoredInToken;
     const userId = verificationResponse._id;
     return userModel.findById(userId);

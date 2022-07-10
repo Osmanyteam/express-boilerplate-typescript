@@ -4,7 +4,7 @@ import { IUser } from '@/apiServices/user/interfaces/users.interface';
 import AuthService from '@/apiServices/auth/auth.service';
 import { HttpException } from '@/exceptions/HttpException';
 import { verify } from 'jsonwebtoken';
-import { SECRET_KEY } from '@/config';
+import { JWT_SECRET } from '@/config';
 import tokenJWTModel from '@/apiServices/auth/models/tokenJWT.model';
 import { JsonController, Body, Post, Authorized, HttpCode, CurrentUser, Patch } from 'routing-controllers';
 import { ResponseSchema, OpenAPI } from 'routing-controllers-openapi';
@@ -51,7 +51,7 @@ class AuthController {
   @ResponseSchema(TokenDataResponseDto)
   async refreshToken(@Body() tokenDataBody: RefreshTokenDto) {
     const { accessToken, refreshToken } = tokenDataBody;
-    const verificationResponse = verify(refreshToken, SECRET_KEY) as DataStoredInToken;
+    const verificationResponse = verify(refreshToken, JWT_SECRET) as DataStoredInToken;
     const tokenJWT = await tokenJWTModel.findOne({ accessToken: accessToken, refreshToken, user: verificationResponse._id });
     if (!tokenJWT) {
       throw new HttpException(401, 'Token not found');
