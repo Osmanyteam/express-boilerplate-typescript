@@ -67,7 +67,6 @@ cp .env.example .env
 - **CORS**: Cross-Origin Resource-Sharing enabled using [cors](https://github.com/expressjs/cors)
 - **Compression**: gzip compression with [compression](https://github.com/expressjs/compression)
 - **CI**: continuous integration with [Travis CI](https://travis-ci.org)
-- **Docker support**
 - **Code coverage**: using [coveralls](https://coveralls.io)
 - **Git hooks**: with [husky](https://github.com/typicode/husky) and [lint-staged](https://github.com/okonet/lint-staged)
 - **Linting**: with [ESLint](https://eslint.org) and [Prettier](https://prettier.io)
@@ -167,7 +166,7 @@ The error handling middleware sends an error response, which has the following f
 "name": "HttpException",
 "message": "You're password not matching",
 "stack": "Error: You're password not matching\n    at AuthService.login (/home/osmany/work/express-boilerplate-typescript/src/apiServices/auth/auth.service.ts:41:36)\n    at async AuthController.logIn (/home/osmany/work/express-boilerplate-typescript/src/apiServices/auth/auth.controller.ts:34:37)",
-  "status": 409
+"status": 409
 ```
 
 ## Validation
@@ -211,7 +210,7 @@ These routes require a valid JWT access token in the Authorization request heade
 
 ## Logging
 
-Import the logger from `src/config/logger.js`. It is using the [Winston](https://github.com/winstonjs/winston) logging library.
+Import the logger from `@utils/logger`. It is using the [Winston](https://github.com/winstonjs/winston) logging library.
 
 Logging should be done according to the following severity levels (ascending order from most important to least important):
 
