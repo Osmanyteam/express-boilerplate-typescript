@@ -17,7 +17,7 @@ If you have an awesome new feature that you want to implement or you found a bug
 
 ### Git commit messages
 
-- Please follow recommendations of [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/)
+- Please follow recommendations of [Conventional Commit](https://www.conventionalcommits.org/en/v1.0.0/) and you can use [Commit Message Editor Extension](https://marketplace.visualstudio.com/items?itemName=adam-bender.commit-message-editor) for write commits properly
 
 ### Coding style guide
 
