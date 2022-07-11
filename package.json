@@ -1,7 +1,7 @@
 {
   "name": "express-api-boilerplate",
   "version": "0.0.0",
-  "description": "boirplate for express api",
+  "description": "boilerplate for express api",
   "author": "osmany jiron <jos.ojiron@gmail.com>",
   "license": "MIT",
   "scripts": {
@@ -10,14 +10,15 @@
     "build": "swc src -d dist --source-maps --copy-files",
     "build:tsc": "tsc && tsc-alias",
     "test": "jest --forceExit --runInBand",
-    "test:report": "jest --forceExit --runInBand --coverage",
+    "test:watch": "jest --watch --forceExit --runInBand --detectOpenHandles --testTimeout=3000",
+    "coverage": "jest --forceExit --runInBand --coverage",
     "lint": "eslint --ignore-path .gitignore --ext .ts src/",
     "lint:fix": "npm run lint -- --fix",
     "deploy:prod": "npm run build && pm2 start ecosystem.config.js --only prod",
     "deploy:dev": "pm2 start ecosystem.config.js --only dev"
   },
   "engines": {
-    "node": "~16.15.0"
+    "node": ">=16.15.0"
   },
   "dependencies": {
     "bcrypt": "^5.0.1",
@@ -40,6 +41,7 @@
     "reflect-metadata": "^0.1.13",
     "routing-controllers": "^0.8.1",
     "routing-controllers-openapi": "^2.2.0",
+    "typedi": "^0.10.0",
     "winston": "^3.3.3"
   },
   "devDependencies": {

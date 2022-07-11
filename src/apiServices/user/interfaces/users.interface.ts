@@ -1,6 +1,7 @@
-export interface User {
-  [x: string]: any;
+export interface IUser {
   _id: string;
+  username: string;
   email: string;
   password: string;
+  role: 'user' | 'admin';
 }

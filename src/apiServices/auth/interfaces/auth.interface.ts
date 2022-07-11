@@ -1,11 +1,11 @@
 import { Request } from 'express';
-import { User } from '@/apiServices/user/interfaces/users.interface';
+import { IUser } from '@/apiServices/user/interfaces/users.interface';
 
 export interface DataStoredInToken {
   _id: string;
 }
 
-export interface TokenData {
+export interface ITokenData {
   accessToken: {
     token: string;
     expiresIn: number;
@@ -17,5 +17,5 @@ export interface TokenData {
 }
 
 export interface RequestWithUser extends Request {
-  user: User;
+  user: IUser;
 }

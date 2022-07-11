@@ -1,4 +1,7 @@
+import mongoose, { connect, set, plugin } from 'mongoose';
 import { DB_URL, NODE_ENV } from '@config';
+import DBConnector from '@/core/dbconnector';
+import { toJSON } from './plugins';
 
 export const dbConnection = {
   url: DB_URL,
@@ -9,10 +12,21 @@ export const dbConnection = {
   },
 };
 
-import { connect, set } from 'mongoose';
+class MongodbService implements DBConnector<typeof mongoose> {
+  private _db: typeof mongoose;
 
-if (NODE_ENV !== 'production') {
-  set('debug', true);
+  async connect(): Promise<typeof mongoose> {
+    if (NODE_ENV !== 'production') {
+      set('debug', true);
+    }
+    plugin(toJSON);
+    this._db = await connect(DB_URL, dbConnection.options);
+    return this._db;
+  }
+
+  get db() {
+    return this._db;
+  }
 }
 
-export default connect(DB_URL, dbConnection.options);
+export default MongodbService;

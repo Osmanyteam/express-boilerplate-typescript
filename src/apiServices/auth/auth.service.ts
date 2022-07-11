@@ -1,38 +1,40 @@
 import { hash, compare } from 'bcrypt';
 import { sign, verify } from 'jsonwebtoken';
-import { SECRET_KEY, ACCESS_TOKEN_EXPIRE_TIME, REFRESH_TOKEN_EXPIRE_TIME } from '@config';
+import { JWT_SECRET, JWT_ACCESS_EXPIRATION_SECONDS, JWT_REFRESH_EXPIRATION_DAYS } from '@config';
 import { CreateUserDto } from '@/apiServices/user/dto/users.dto';
 import { HttpException } from '@exceptions/HttpException';
-import { DataStoredInToken, TokenData } from '@/apiServices/auth/interfaces/auth.interface';
-import { User } from '@/apiServices/user/interfaces/users.interface';
+import { DataStoredInToken, ITokenData } from '@/apiServices/auth/interfaces/auth.interface';
 import userModel from '@/apiServices/user/models/users.model';
 import { isEmpty } from '@utils/util';
 import tokenJWTModel from '@/apiServices/auth/models/tokenJWT.model';
 import { RequestWithUser } from './interfaces/auth.interface';
 import { Action } from 'routing-controllers';
 import { logger } from '@/utils/logger';
+import { Service } from 'typedi';
+import { IUser } from '../user/interfaces/users.interface';
 
-const secretKey: string = SECRET_KEY;
+const secretKey: string = JWT_SECRET;
 
+@Service()
 class AuthService {
   public users = userModel;
 
-  public async signup(userData: CreateUserDto): Promise<User> {
+  public async signup(userData: CreateUserDto): Promise<IUser> {
     if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
 
-    const findUser: User = await this.users.findOne({ email: userData.email });
+    const findUser: IUser = await this.users.findOne({ email: userData.email });
     if (findUser) throw new HttpException(409, `You're email ${userData.email} already exists`);
 
     const hashedPassword = await hash(userData.password, 10);
-    const createUserData: User = await this.users.create({ ...userData, password: hashedPassword });
+    const createUserData: IUser = await this.users.create({ ...userData, password: hashedPassword });
 
     return createUserData;
   }
 
-  public async login(userData: CreateUserDto): Promise<{ tokenData: TokenData; findUser: User }> {
+  public async login(userData: CreateUserDto): Promise<{ tokenData: ITokenData; findUser: IUser }> {
     if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
 
-    const findUser: User = await this.users.findOne({ email: userData.email });
+    const findUser: IUser = await this.users.findOne({ email: userData.email });
     if (!findUser) throw new HttpException(409, `You're email ${userData.email} not found`);
 
     const isPasswordMatching: boolean = await compare(userData.password, findUser.password);
@@ -43,20 +45,20 @@ class AuthService {
     return { tokenData, findUser };
   }
 
-  public async logout(authorization: string, userData: User): Promise<User> {
+  public async logout(authorization: string, userData: IUser): Promise<IUser> {
     if (isEmpty(userData)) throw new HttpException(400, "You're not userData");
-    const findUser: User = await this.users.findOne({ email: userData.email, password: userData.password });
+    const findUser: IUser = await this.users.findOne({ email: userData.email, password: userData.password });
     if (!findUser) throw new HttpException(409, `You're email ${userData.email} not found`);
     await tokenJWTModel.deleteOne({ user: userData._id, accessToken: authorization });
 
     return findUser;
   }
 
-  public async createToken(user: User): Promise<TokenData> {
+  public async createToken(user: IUser): Promise<ITokenData> {
     const dataStoredInToken: DataStoredInToken = { _id: user._id };
-    const secretKey: string = SECRET_KEY;
-    const expiresIn = Number(ACCESS_TOKEN_EXPIRE_TIME);
-    const expiresRefreshToken = Number(REFRESH_TOKEN_EXPIRE_TIME);
+    const secretKey: string = JWT_SECRET;
+    const expiresIn = Number(JWT_ACCESS_EXPIRATION_SECONDS);
+    const expiresRefreshToken = Number(JWT_REFRESH_EXPIRATION_DAYS);
 
     const tokenData = {
       accessToken: {
@@ -90,7 +92,7 @@ class AuthService {
         const user = await userModel.findById(userId);
 
         if (user && !roles.length) return true;
-        if (user && roles.find(role => user.roles.indexOf(role) !== -1)) return true;
+        if (user && roles.find(role => user.role === role)) return true;
       }
       return false;
     } catch (error) {
@@ -102,7 +104,7 @@ class AuthService {
   public static async currentUserChecker(action: Action) {
     const Authorization = this.getAuthorizationToken(action.request);
     if (typeof Authorization !== 'string') return {};
-    const secretKey: string = SECRET_KEY;
+    const secretKey: string = JWT_SECRET;
     const verificationResponse = verify(Authorization, secretKey) as DataStoredInToken;
     const userId = verificationResponse._id;
     return userModel.findById(userId);

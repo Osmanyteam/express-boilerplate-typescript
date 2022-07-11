@@ -1,4 +1,4 @@
-export interface TokenJWT {
+export interface ITokenJWT {
   _id: string;
   user: string;
   token: string;

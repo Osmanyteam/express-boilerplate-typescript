@@ -1,6 +1,5 @@
-import { model, Schema, Document } from 'mongoose';
-import { User } from '@/apiServices/user/interfaces/users.interface';
-import { toJSON } from '../../../models/plugins';
+import { model, Schema } from 'mongoose';
+import { IUser } from '@/apiServices/user/interfaces/users.interface';
 
 /**
  * A Mongoose schema for the User model.
@@ -8,8 +7,17 @@ import { toJSON } from '../../../models/plugins';
  * @property {string} email - The email of the user.
  * @property {string} password - The password of the user.
  */
-const userSchema: Schema = new Schema({
+const userSchema = new Schema<IUser>({
   email: {
+    type: String,
+    required: true,
+    unique: true,
+  },
+  type: {
+    type: String,
+    required: true,
+  },
+  username: {
     type: String,
     required: true,
     unique: true,
@@ -19,11 +27,14 @@ const userSchema: Schema = new Schema({
     required: true,
     private: true,
   },
+  roles: {
+    type: String,
+    required: true,
+    enum: ['user', 'admin'],
+    default: 'user',
+  },
 });
 
-// appends plugins
-userSchema.plugin(toJSON);
-
-const userModel = model<User & Document>('User', userSchema);
+const userModel = model<IUser>('User', userSchema);
 
 export default userModel;
